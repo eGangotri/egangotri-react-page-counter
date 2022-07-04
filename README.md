@@ -34,3 +34,6 @@ https://levelup.gitconnected.com/understand-and-configure-absolute-import-paths-
 https://creativedesignsguru.com/how-to-configure-eslint-prettier-react/
 npm i eslint --save-dev
 npm install eslint-config-airbnb-typescript @typescript-eslint/eslint-plugin @typescript-eslint/parser --save-dev
+
+### Use of Personal Access Token
+ git push  https://egangotri:<PAT>@github.com/eGangotri/egangotri-react-page-counter.git
