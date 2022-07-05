@@ -16,7 +16,6 @@ export class HelperService {
     });
 
     const data = await Promise.all(promises);
-    console.log(`data-> ${JSON.stringify(data)}`);
     return data;
   };
 
@@ -67,7 +66,6 @@ export class HelperService {
       pageCount,
       pdfSize,
     };
-    console.log(`countPages ${JSON.stringify(row.pageCount)}`);
     return row;
   };
 }

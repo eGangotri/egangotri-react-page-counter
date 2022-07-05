@@ -1,53 +1,71 @@
-import './PageCounter.css';
+import "./PageCounter.css";
 
-import { Box, Button, Stack, TextField } from '@mui/material';
-import React, { useState } from 'react';
-import { FaCopy, FaEraser, FaUpload } from 'react-icons/fa';
-import HelperService from 'service/HelperService';
+import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
+import Icon from "components/common/Icons";
+import React, { useRef, useState } from "react";
+import _ from "lodash";
+import { FaCopy, FaRegTrashAlt, FaUpload } from "react-icons/fa";
+
+import HelperService from "service/HelperService";
+import AllPdfStats from "vo/AllPdfStats";
 
 const PageCounter = () => {
-  const [pdfData, setPdfData] = useState<JSX.Element>(<></>);
-  const [staffName, setStaffName] = useState<string>('');
+  const [pdfData, setPdfData] = useState<AllPdfStats>(new AllPdfStats());
+  const [staffName, setStaffName] = useState<string>("");
+  const [disabledState, setDisabledState] = useState<boolean>(false);
+
+  const dataHoldingElement = useRef();
+  const copyButton = useRef();
+  const clearButton = useRef();
 
   const clearResults = () => {
-    console.log('clearResults');
-    setStaffName('');
-    setPdfData(<></>);
+    setStaffName("");
+    setPdfData(new AllPdfStats());
+    setDisabledState(true);
   };
 
   const copyResults = () => {
-    // Toast Message that Results have bhoseen copied.
+    // TODO: Toast Message that Results have been copied.
+    navigator.clipboard.writeText(AllPdfStats.toString(pdfData));
   };
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
-    console.log(`files ${files}`);
-    console.log(`files ${files && files[0].name}`);
-    console.log(`files ${files && files[0].size}`);
-
     if (files) {
       const data = await HelperService.processFiles(
         Array.from(files!),
         staffName
       );
-      setPdfData(data.toString());
+      setPdfData(data);
     }
   };
 
   return (
     <Stack spacing={2}>
-      <Box sx={{ bgcolor: '#cfe8fc' }}>eGangotri PDF Page Counter</Box>
-      <Box sx={{ bgcolor: 'white' }}>
-        Please Enter your name:{' '}
+      <Box sx={{ bgcolor: "#cfe8fc" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Typography>eGangotri PDF Page Counter</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <Icon icon="gangotri" height="300px" width="650px" />
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Box sx={{ bgcolor: "white" }}>
+        Please Enter your name:{" "}
         <TextField
-          id="filled-basic"
-          variant="filled"
+          variant="outlined"
+          label="Required"
+          error={_.isEmpty(staffName)}
+          size="small"
           onChange={(e) => setStaffName(e.target.value)}
         />
       </Box>
       <label htmlFor="upload-pdf">
         <input
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           id="upload-pdf"
           name="upload-pdf"
           type="file"
@@ -59,34 +77,31 @@ const PageCounter = () => {
           color="primary"
           variant="contained"
           component="span"
-          endIcon={<FaUpload style={{ color: 'primary' }} />}
+          disabled={_.isEmpty(staffName)}
+          endIcon={<FaUpload style={{ color: "primary" }} />}
         >
-          Upload button
+          Upload
         </Button>
       </label>
       <Stack spacing={2} direction="row">
         <Button
           variant="contained"
-          endIcon={
-            <FaCopy style={{ color: 'primary' }} />
-          }
+          endIcon={<FaCopy style={{ color: "primary" }} />}
           onClick={copyResults}
+          disabled={AllPdfStats.isEmpty(pdfData)}
         >
-          Copy Results
+          Copy
         </Button>
         <Button
           variant="contained"
-          endIcon={
-            <FaEraser
-              style={{ color: 'primary' }}
-            />
-          }
+          endIcon={<FaRegTrashAlt style={{ color: "primary" }} />}
           onClick={() => clearResults()}
+          disabled={AllPdfStats.isEmpty(pdfData)}
         >
-          Clear Results
+          Clear
         </Button>
       </Stack>
-      <Box>{pdfData}</Box>
+      <Box ref={dataHoldingElement}>{AllPdfStats.decorate(pdfData)}</Box>
     </Stack>
   );
 };
