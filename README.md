@@ -46,3 +46,6 @@ First time
 afterwards
 firebase login
 firebase deploy
+
+https://egangotri-react-page-counter.web.app/
+https://egangotri-react-page-counter.firebaseapp.com/
