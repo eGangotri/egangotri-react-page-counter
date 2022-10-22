@@ -37,3 +37,12 @@ npm install eslint-config-airbnb-typescript @typescript-eslint/eslint-plugin @ty
 
 ### Use of Personal Access Token
  git push  https://egangotri:PAT@github.com/eGangotri/egangotri-react-page-counter.git
+ insert your Tokern in PAT above
+
+### firebase Deployment
+First time
+ npm install -g firebase-tools
+ firebase init 
+afterwards
+firebase login
+firebase deploy
