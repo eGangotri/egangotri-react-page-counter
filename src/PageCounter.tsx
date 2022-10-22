@@ -1,17 +1,16 @@
-import "./PageCounter.css";
+import './PageCounter.css';
 
-import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
-import Icon from "components/common/Icons";
-import React, { useRef, useState } from "react";
-import _ from "lodash";
-import { FaCopy, FaRegTrashAlt, FaUpload } from "react-icons/fa";
-
-import HelperService from "service/HelperService";
-import AllPdfStats from "vo/AllPdfStats";
+import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
+import Icon from 'components/common/Icons';
+import _ from 'lodash';
+import React, { useRef, useState } from 'react';
+import { FaCopy, FaRegTrashAlt, FaUpload } from 'react-icons/fa';
+import HelperService from 'service/HelperService';
+import AllPdfStats from 'vo/AllPdfStats';
 
 const PageCounter = () => {
   const [pdfData, setPdfData] = useState<AllPdfStats>(new AllPdfStats());
-  const [staffName, setStaffName] = useState<string>("");
+  const [staffName, setStaffName] = useState<string>('');
   const [disabledState, setDisabledState] = useState<boolean>(false);
 
   const dataHoldingElement = useRef();
@@ -19,7 +18,7 @@ const PageCounter = () => {
   const clearButton = useRef();
 
   const clearResults = () => {
-    setStaffName("");
+    setStaffName('');
     setPdfData(new AllPdfStats());
     setDisabledState(true);
   };
@@ -42,7 +41,7 @@ const PageCounter = () => {
 
   return (
     <Stack spacing={2}>
-      <Box sx={{ bgcolor: "#cfe8fc" }}>
+      <Box sx={{ bgcolor: '#cfe8fc' }}>
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <Typography>eGangotri PDF Page Counter</Typography>
@@ -53,8 +52,8 @@ const PageCounter = () => {
         </Grid>
       </Box>
 
-      <Box sx={{ bgcolor: "white" }}>
-        Please Enter your name:{" "}
+      <Box sx={{ bgcolor: 'white' }}>
+        Please Enter your name:{' '}
         <TextField
           variant="outlined"
           label="Required"
@@ -65,7 +64,7 @@ const PageCounter = () => {
       </Box>
       <label htmlFor="upload-pdf">
         <input
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
           id="upload-pdf"
           name="upload-pdf"
           type="file"
@@ -78,7 +77,7 @@ const PageCounter = () => {
           variant="contained"
           component="span"
           disabled={_.isEmpty(staffName)}
-          endIcon={<FaUpload style={{ color: "primary" }} />}
+          endIcon={<FaUpload style={{ color: 'primary' }} />}
         >
           Upload
         </Button>
@@ -86,7 +85,7 @@ const PageCounter = () => {
       <Stack spacing={2} direction="row">
         <Button
           variant="contained"
-          endIcon={<FaCopy style={{ color: "primary" }} />}
+          endIcon={<FaCopy style={{ color: 'primary' }} />}
           onClick={copyResults}
           disabled={AllPdfStats.isEmpty(pdfData)}
         >
@@ -94,7 +93,7 @@ const PageCounter = () => {
         </Button>
         <Button
           variant="contained"
-          endIcon={<FaRegTrashAlt style={{ color: "primary" }} />}
+          endIcon={<FaRegTrashAlt style={{ color: 'primary' }} />}
           onClick={() => clearResults()}
           disabled={AllPdfStats.isEmpty(pdfData)}
         >
