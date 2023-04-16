@@ -12,14 +12,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { pushReport as pushReportToServer } from "api/service/pushDailyReportToServer";
 import Icon from "components/common/Icons";
 import _ from "lodash";
 import React, { useRef, useState } from "react";
 import { FaCopy, FaRegTrashAlt, FaUpload } from "react-icons/fa";
 import { GoFileMedia } from "react-icons/go";
 import HelperService from "service/HelperService";
+import { DailyWorkReportType } from "types/dailyyWorkReportTypes";
 import AllPdfStats from "vo/AllPdfStats";
-
+import * as DailyReportUtil from "utils/DailyReportUtil"
 const DailyReport = () => {
   
   const centers = ["Delhi", "Haridwar", "Jammu", "Srinagar", "Varanasi"];
@@ -101,11 +103,17 @@ const DailyReport = () => {
     if (files) {
       const data = await HelperService.processFiles(
         Array.from(files!),
-        staffName
+        staffName, center,library
       );
       setPdfData(data);
     }
   };
+
+  const prepareReportForPush = () =>{
+    const dailyReport:DailyWorkReportType = AllPdfStats.convertPdfStatsToDailyWorkReportTypeObject(pdfData)
+    console.log(`dailyReport ${JSON.stringify(dailyReport)}`)
+    pushReportToServer(dailyReport)
+  }
 
   return (
     <Stack spacing={2}>
@@ -192,6 +200,8 @@ const DailyReport = () => {
           component="span"
           disabled={_.isEmpty(staffName)}
           endIcon={<FaUpload style={{ color: "primary" }} />}
+          onClick={() => prepareReportForPush()}
+          
         >
           Send to Server
         </Button>

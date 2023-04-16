@@ -29,3 +29,5 @@ export function aggregate(summable: number[]) {
     0
   );
 }
+
+export const DD_MM_YYYY_FORMAT = 'DD-MMM-YYYY'

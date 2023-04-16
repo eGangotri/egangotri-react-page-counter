@@ -4,9 +4,9 @@ import AllPdfStats from 'vo/AllPdfStats';
 import type PdfStat from 'vo/PdfStat';
 
 export class HelperService {
-  static processFiles = async (files: File[], staffName: string) => {
+  static processFiles = async (files: File[], staffName: string, center: string, lib: string) => {
     const data = await this.createData(files);
-    return this.processData(data, staffName);
+    return this.processData(data, staffName, center, lib);
   };
 
   static createData = async (files: File[]) => {
@@ -19,9 +19,11 @@ export class HelperService {
     return data;
   };
 
-  static processData(pdfStats: PdfStat[], staffName: string) {
+  static processData(pdfStats: PdfStat[], staffName: string, center: string, lib: string) {
     const allPdfStats: AllPdfStats = new AllPdfStats();
     allPdfStats.pdfCount = pdfStats.length;
+    allPdfStats.center = center
+    allPdfStats.lib = lib
     allPdfStats.timeOfRequest = new Date().toDateString();
     allPdfStats.globalCount = DailyReportUtil.aggregate(
       pdfStats.map((x) => x.pageCount)

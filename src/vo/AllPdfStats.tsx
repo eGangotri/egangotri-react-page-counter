@@ -7,9 +7,17 @@ import * as GeneralUtils from 'utils/GeneralUtils';
 import Decorator from 'vo/Decorator';
 
 import type PdfStat from './PdfStat';
+import { DailyWorkReportType } from 'types/dailyyWorkReportTypes';
+import moment from 'moment';
 
 export default class AllPdfStats {
   title = 'eGangotri Daily Work Report';
+
+  center = "";
+
+  lib = "";
+
+  dateOfReport = new Date();
 
   globalCount = 0;
 
@@ -101,4 +109,27 @@ Total Page Count:${all.globalCount}
 Total Size: ${DailyReportUtil.sizeInfo(all.totalSize)}\n
 ${AllPdfStats.pdfDataArrayToString(all.pdfs)}`;
   };
+
+  static convertPdfStatsToDailyWorkReportTypeObject= (pdfData: AllPdfStats) => {
+    const dailyWorkReport:DailyWorkReportType =
+      {
+        "operatorName": pdfData.staffName,
+        "center": pdfData.center,
+        "lib": pdfData.lib,
+        "totalPdfCount": pdfData.pdfCount,
+        "totalPageCount": pdfData.globalCount,
+        "totalSize": DailyReportUtil.sizeInfo(pdfData.totalSize),
+        "dateOfReport":  pdfData.dateOfReport,
+        pageCountStats:[]
+      }
+
+      pdfData.pdfs.forEach( (_pdf:PdfStat)=>{
+        dailyWorkReport.pageCountStats.push({
+          "fileName": _pdf.name,
+          "pageCount": _pdf.pageCount,
+          "fileSize": DailyReportUtil.sizeInfo(_pdf.pdfSize)
+        })
+      })
+      return dailyWorkReport
+  }
 }
