@@ -16,6 +16,7 @@ import Icon from "components/common/Icons";
 import _ from "lodash";
 import React, { useRef, useState } from "react";
 import { FaCopy, FaRegTrashAlt, FaUpload } from "react-icons/fa";
+import { GoFileMedia } from "react-icons/go";
 import HelperService from "service/HelperService";
 import AllPdfStats from "vo/AllPdfStats";
 
@@ -178,12 +179,22 @@ const DailyReport = () => {
           variant="contained"
           component="span"
           disabled={_.isEmpty(staffName)}
-          endIcon={<FaUpload style={{ color: "primary" }} />}
+          endIcon={<GoFileMedia style={{ color: "primary" }} />}
         >
-          Upload
+          Choose PDFs
         </Button>
       </label>
       <Stack spacing={2} direction="row">
+      
+      <Button
+          color="primary"
+          variant="contained"
+          component="span"
+          disabled={_.isEmpty(staffName)}
+          endIcon={<FaUpload style={{ color: "primary" }} />}
+        >
+          Send to Server
+        </Button>
         <Button
           variant="contained"
           endIcon={<FaCopy style={{ color: "primary" }} />}
