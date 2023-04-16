@@ -1,6 +1,6 @@
 import './index.css';
 
-import PageCounter from 'pages/PageCounter';
+import DailyReport from 'pages/DailyReport';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -9,6 +9,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <PageCounter />
+    <DailyReport />
   </React.StrictMode>
 );

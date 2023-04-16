@@ -5,6 +5,11 @@
         "airbnb-base",
         "plugin:prettier/recommended"
     ],
+    "settings": {
+        "react": {
+          "version": "detect"
+        }
+    },
     "rules": {
         "react/jsx-filename-extension": [
             1,

@@ -1,5 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
-import * as PageCounterUtil from 'utils/PageCounterUtil';
+import * as DailyReportUtil from 'utils/DailyReportUtil';
 import AllPdfStats from 'vo/AllPdfStats';
 import type PdfStat from 'vo/PdfStat';
 
@@ -23,10 +23,10 @@ export class HelperService {
     const allPdfStats: AllPdfStats = new AllPdfStats();
     allPdfStats.pdfCount = pdfStats.length;
     allPdfStats.timeOfRequest = new Date().toDateString();
-    allPdfStats.globalCount = PageCounterUtil.aggregate(
+    allPdfStats.globalCount = DailyReportUtil.aggregate(
       pdfStats.map((x) => x.pageCount)
     );
-    allPdfStats.totalSize = PageCounterUtil.aggregate(
+    allPdfStats.totalSize = DailyReportUtil.aggregate(
       pdfStats.map((x) => x.pdfSize)
     );
     allPdfStats.staffName = staffName;
@@ -47,7 +47,7 @@ export class HelperService {
   //     }
   //   }
   //   clipBoardData += `Total Page Count: ${pdfInfo.globalCount}`;
-  //   clipBoardData += `\nTotal Size: ${PageCounterUtil.sizeInfo(
+  //   clipBoardData += `\nTotal Size: ${DailyReportUtil.sizeInfo(
   //     pdfInfo.totalSize
   //   )}`;
   //   return clipBoardData;

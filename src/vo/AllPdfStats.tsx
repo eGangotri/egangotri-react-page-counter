@@ -1,14 +1,15 @@
+import React from 'react';
 import { Box, Typography } from '@mui/material';
 import DenseTable from 'components/Table';
-import React from 'react';
+
+import * as DailyReportUtil from 'utils/DailyReportUtil';
 import * as GeneralUtils from 'utils/GeneralUtils';
-import * as PageCounterUtil from 'utils/PageCounterUtil';
 import Decorator from 'vo/Decorator';
 
 import type PdfStat from './PdfStat';
 
 export default class AllPdfStats {
-  title = 'eGangotri Page Counter';
+  title = 'eGangotri Daily Work Report';
 
   globalCount = 0;
 
@@ -68,7 +69,7 @@ export default class AllPdfStats {
         <Typography>
           Total Size:{' '}
           <span style={{ fontWeight: 'bold' }}>
-            {PageCounterUtil.sizeInfo(all.totalSize)}
+            {DailyReportUtil.sizeInfo(all.totalSize)}
           </span>
         </Typography>
         <Typography>
@@ -89,7 +90,7 @@ export default class AllPdfStats {
   static pdfDataToString = (pdfStat: PdfStat, index: number) => {
     return `(${index}) ${pdfStat.name}\t ${
       pdfStat.pageCount
-    } pages \t ${PageCounterUtil.sizeInfo(pdfStat.pdfSize)}\n\n`;
+    } pages \t ${DailyReportUtil.sizeInfo(pdfStat.pdfSize)}\n\n`;
   };
 
   static toString = (all: AllPdfStats): string => {
@@ -97,7 +98,7 @@ export default class AllPdfStats {
       all.pdfCount
     } pdf(s) On ${all.timeOfRequest}\n
 Total Page Count:${all.globalCount}
-Total Size: ${PageCounterUtil.sizeInfo(all.totalSize)}\n
+Total Size: ${DailyReportUtil.sizeInfo(all.totalSize)}\n
 ${AllPdfStats.pdfDataArrayToString(all.pdfs)}`;
   };
 }

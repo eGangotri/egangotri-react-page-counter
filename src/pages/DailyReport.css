@@ -1,9 +1,9 @@
-.PageCounter {
+.DailyReport {
   text-align: center;
 }
 
 
-.PageCounter-header {
+.DailyReport-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -14,6 +14,6 @@
   color: white;
 }
 
-.PageCounter-link {
+.DailyReport-link {
   color: #61dafb;
 }

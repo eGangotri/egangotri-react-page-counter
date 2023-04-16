@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import * as React from 'react';
-import * as PageCounterUtil from 'utils/PageCounterUtil';
+import * as DailyReportUtil from 'utils/DailyReportUtil';
 import type PdfStat from 'vo/PdfStat';
 
 type PdfStatsProps = {
@@ -37,7 +37,7 @@ const DenseTable: React.FC<PdfStatsProps> = ({ rows }) => {
               <TableCell>{row.name}</TableCell>
               <TableCell align="right">{row.pageCount}</TableCell>
               <TableCell align="right">
-                {PageCounterUtil.sizeInfo(row.pdfSize)}
+                {DailyReportUtil.sizeInfo(row.pdfSize)}
               </TableCell>
             </TableRow>
           ))}
