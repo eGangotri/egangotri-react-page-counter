@@ -12,68 +12,73 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { pushReport as pushReportToServer } from "api/service/pushDailyReportToServer";
+import { pushReport as pushReportToServer } from "api/service/callApi";
 import Icon from "components/common/Icons";
 import _ from "lodash";
 import React, { useRef, useState } from "react";
 import { FaCopy, FaRegTrashAlt, FaUpload } from "react-icons/fa";
+import { FiLogIn } from "react-icons/fi";
 import { GoFileMedia } from "react-icons/go";
 import HelperService from "service/HelperService";
 import { DailyWorkReportType } from "types/dailyyWorkReportTypes";
 import AllPdfStats from "vo/AllPdfStats";
-import * as DailyReportUtil from "utils/DailyReportUtil"
 const DailyReport = () => {
-  
   const centers = ["Delhi", "Haridwar", "Jammu", "Srinagar", "Varanasi"];
 
   const libraryMenuOptions = [
     {
-      name:centers[0],
-      centers:["CSU", "Sarai"]
+      name: centers[0],
+      centers: ["CSU", "Sarai"],
     },
     {
-      name:centers[1],
-      centers:["Gurukul-Kangri"]
+      name: centers[1],
+      centers: ["Gurukul-Kangri"],
     },
     {
-      name:centers[2],
-      centers:["BVT-Lucknow"]
+      name: centers[2],
+      centers: ["BVT-Lucknow"],
     },
     {
-      name:centers[3],
-      centers:["SPS", "JKACADEMY"]
+      name: centers[3],
+      centers: ["SPS", "JKACADEMY"],
     },
     {
-      name:centers[4],
-      centers:
-      ["Vasishth Tripathi",
-      "Jangam",
-      "Kamalakarji",
-      "Mumukshu",
-      "Ved Nidhi"]
-    }
+      name: centers[4],
+      centers: [
+        "Vasishth Tripathi",
+        "Jangam",
+        "Kamalakarji",
+        "Mumukshu",
+        "Ved Nidhi",
+      ],
+    },
   ];
 
-  const getLibrariesInCenter = (_center:string = ""):string[]  => {
-    const obj = libraryMenuOptions.find(o => o.name === (_center || center));
-    const _libraries = obj?.centers || []
-    return _libraries
-  }
-  
+  const getLibrariesInCenter = (_center: string = ""): string[] => {
+    const obj = libraryMenuOptions.find((o) => o.name === (_center || center));
+    const _libraries = obj?.centers || [];
+    return _libraries;
+  };
+
   const [pdfData, setPdfData] = useState<AllPdfStats>(new AllPdfStats());
   const [staffName, setStaffName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [disabledState, setDisabledState] = useState<boolean>(false);
   const [center, setCenter] = React.useState<string>(centers[0]);
-  const [libraries, setLibraries] = React.useState<string[]>(getLibrariesInCenter());
+  const [libraries, setLibraries] = React.useState<string[]>(
+    getLibrariesInCenter()
+  );
   const [library, setLibrary] = React.useState<string>(libraries[0]);
 
   const dataHoldingElement = useRef();
   const copyButton = useRef();
   const clearButton = useRef();
 
-  const panelOneCSS = { bgcolor: "white", marginRight:"10px" }
+  const panelOneCSS = { bgcolor: "white", marginRight: "10px" };
   const clearResults = () => {
     setStaffName("");
+    setPassword("");
     setPdfData(new AllPdfStats());
     setDisabledState(true);
   };
@@ -89,7 +94,12 @@ const DailyReport = () => {
     setCenter(val);
     const _libraries = getLibrariesInCenter(val);
     setLibrary(_libraries[0]);
-    setLibraries(_libraries)
+    setLibraries(_libraries);
+  };
+
+  const loginToPortal = async () => {
+    const logIn = await HelperService.logIn(staffName,password);
+    setLoggedIn(logIn);
   };
 
   const handleLibChange = (event: SelectChangeEvent) => {
@@ -98,22 +108,25 @@ const DailyReport = () => {
     setLibrary(val);
   };
 
-  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (files) {
       const data = await HelperService.processFiles(
         Array.from(files!),
-        staffName, center,library
+        staffName,
+        center,
+        library
       );
       setPdfData(data);
     }
   };
 
-  const prepareReportForPush = () =>{
-    const dailyReport:DailyWorkReportType = AllPdfStats.convertPdfStatsToDailyWorkReportTypeObject(pdfData)
-    console.log(`dailyReport ${JSON.stringify(dailyReport)}`)
-    pushReportToServer(dailyReport)
-  }
+  const prepareReportForPush = () => {
+    const dailyReport: DailyWorkReportType =
+      AllPdfStats.convertPdfStatsToDailyWorkReportTypeObject(pdfData);
+    console.log(`dailyReport ${JSON.stringify(dailyReport)}`);
+    pushReportToServer(dailyReport);
+  };
 
   return (
     <Stack spacing={2}>
@@ -128,9 +141,9 @@ const DailyReport = () => {
         </Grid>
       </Box>
 
-      <Box sx={{display:"flex", flexDirection: "row"}} >
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box sx={panelOneCSS}>
-          Please Enter your name:{" "}
+          First Name:{" "}
           <TextField
             variant="outlined"
             label="Required"
@@ -140,25 +153,51 @@ const DailyReport = () => {
           />
         </Box>
         <Box sx={panelOneCSS}>
+          Password:{" "}
+          <TextField
+            variant="outlined"
+            label="Required"
+            error={_.isEmpty(password)}
+            size="small"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Box>
+
+        <Box sx={panelOneCSS}>
+          Login:{" "}
+          <Button
+            color="primary"
+            variant="contained"
+            component="span"
+            disabled={_.isEmpty(staffName) && _.isEmpty(password)}
+            onClick={()=>loginToPortal()}
+            endIcon={<FiLogIn style={{ color: "primary" }} />}
+          >
+            Login
+          </Button>
+        </Box>
+        <Box sx={panelOneCSS}>
           <InputLabel id="l1">Center</InputLabel>
         </Box>
         <Box sx={panelOneCSS}>
-        <Select
+          <Select
             labelId="l1"
             id="demo-simple-select-standard"
             value={center}
             onChange={handleCenterChange}
           >
             {centers.map((option: string) => (
-              <MenuItem  key={option} value={option}>{option}</MenuItem>
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
             ))}
           </Select>
         </Box>
         <Box sx={panelOneCSS}>
-        <InputLabel id="l2">Library</InputLabel>
+          <InputLabel id="l2">Library</InputLabel>
         </Box>
         <Box sx={panelOneCSS}>
-
           <Select
             labelId="l2"
             id="demo-simple-select-filled"
@@ -166,8 +205,14 @@ const DailyReport = () => {
             onChange={handleLibChange}
             label="Library"
           >
-            {(libraries||[]).map((option: string, index:number) => (
-              <MenuItem key={option} value={option} selected={option === library || index===1}>{option}</MenuItem>
+            {(libraries || []).map((option: string, index: number) => (
+              <MenuItem
+                key={option}
+                value={option}
+                selected={option === library || index === 1}
+              >
+                {option}
+              </MenuItem>
             ))}
           </Select>
         </Box>
@@ -180,28 +225,26 @@ const DailyReport = () => {
           type="file"
           multiple
           accept=".pdf"
-          onChange={onChange}
+          onChange={uploadPdf}
         />
         <Button
           color="primary"
           variant="contained"
           component="span"
-          disabled={_.isEmpty(staffName)}
+          disabled={!loggedIn}
           endIcon={<GoFileMedia style={{ color: "primary" }} />}
         >
           Choose PDFs
         </Button>
       </label>
       <Stack spacing={2} direction="row">
-      
-      <Button
+        <Button
           color="primary"
           variant="contained"
           component="span"
-          disabled={_.isEmpty(staffName)}
+          disabled={!loggedIn}
           endIcon={<FaUpload style={{ color: "primary" }} />}
           onClick={() => prepareReportForPush()}
-          
         >
           Send to Server
         </Button>

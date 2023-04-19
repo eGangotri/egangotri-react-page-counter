@@ -1,3 +1,4 @@
+import { checkValidCredentials } from 'api/service/callApi';
 import { PDFDocument } from 'pdf-lib';
 import * as DailyReportUtil from 'utils/DailyReportUtil';
 import AllPdfStats from 'vo/AllPdfStats';
@@ -70,6 +71,10 @@ export class HelperService {
     };
     return row;
   };
+
+  static logIn = async (staffName: string, password: string) => {
+    return await checkValidCredentials(staffName,password);
+  }
 }
 
 export default HelperService;
