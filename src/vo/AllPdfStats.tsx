@@ -59,7 +59,7 @@ export default class AllPdfStats {
     return (
       <Box>
         <Typography>
-          Work Status for {GeneralUtils.capitalize(all.staffName)}:
+          Work Status for <span style={{ fontWeight: 'bold' }}>{GeneralUtils.capitalize(all.staffName)} ({all.center}/{all.lib})</span> :
         </Typography>
         <Typography>
           {' '}
@@ -102,7 +102,7 @@ export default class AllPdfStats {
   };
 
   static toString = (all: AllPdfStats): string => {
-    return `${GeneralUtils.capitalize(all.staffName)} Work Status for ${
+    return `${GeneralUtils.capitalize(all.staffName)} (${all.center}/${all.lib}) Work Status for ${
       all.pdfCount
     } pdf(s) On ${all.timeOfRequest}\n
 Total Page Count:${all.globalCount}
