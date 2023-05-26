@@ -164,6 +164,7 @@ const DailyReport = () => {
             id="demo-simple-select-standard"
             value={center}
             onChange={handleCenterChange}
+            sx={{minWidth: '200px'}}
           >
             {centers.map((option: string) => (
               <MenuItem key={option} value={option}>
@@ -182,6 +183,7 @@ const DailyReport = () => {
             value={library}
             onChange={handleLibChange}
             label="Library"
+            sx={{minWidth: '200px'}}
           >
             {(libraries || []).map((option: string, index: number) => (
               <MenuItem
@@ -229,11 +231,7 @@ const DailyReport = () => {
         </Button> */}
 
         <SendReportDialog pdfData={pdfData} setPdfData={setPdfData} snackBarOpen={snackBarOpen} setSnackBarOpen={setSnackBarOpen}/>
-        <Snackbar open={snackBarOpen} autoHideDuration={6000}>
-          <Alert severity="success" sx={{ width: '100%' }}>
-            Report Sent succcessfully
-          </Alert>
-        </Snackbar>
+        
         {/* <Button
           variant="contained"
           endIcon={<FaCopy style={{ color: "primary" }} />}
@@ -250,6 +248,13 @@ const DailyReport = () => {
         >
           Clear
         </Button>
+       <Box>
+       <Snackbar open={snackBarOpen} autoHideDuration={6000}>
+          <Alert severity="success" sx={{ width: '100%' }}>
+            Report Sent succcessfully
+          </Alert>
+        </Snackbar>
+       </Box>
       </Stack>
       <Box ref={dataHoldingElement}>{AllPdfStats.decorate(pdfData)}</Box>
     </Stack>
