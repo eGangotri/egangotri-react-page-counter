@@ -40,10 +40,9 @@ export async function checkValidCredentials(staffName: string, password: string)
     body: JSON.stringify(loginInfo),
   }
 
-  console.log(`_url ${_url}`)
   const res = await fetch(_url, options)
-  console.log(`res ${JSON.stringify(res)}`)
+  //shall be  {"response":false} or {"response":true}
   const items = await res.json()
-  console.log(`items ${items.length}`)
+  console.log(`checkValidCredentials:res ${JSON.stringify(items)}`)
   return items.response
 }

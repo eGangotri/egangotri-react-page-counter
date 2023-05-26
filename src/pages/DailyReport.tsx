@@ -1,6 +1,8 @@
 import "./DailyReport.css";
 
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   Grid,
@@ -8,6 +10,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -22,37 +25,10 @@ import { GoFileMedia } from "react-icons/go";
 import HelperService from "service/HelperService";
 import { DailyWorkReportType } from "types/dailyyWorkReportTypes";
 import AllPdfStats from "vo/AllPdfStats";
-const DailyReport = () => {
-  const centers = ["Delhi", "Haridwar", "Jammu", "Srinagar", "Varanasi"];
+import { libraryMenuOptions, centers } from "pages/constants";
+import SendReportDialog from "pages/SendToServerDialog";
 
-  const libraryMenuOptions = [
-    {
-      name: centers[0],
-      centers: ["CSU", "Sarai"],
-    },
-    {
-      name: centers[1],
-      centers: ["Gurukul-Kangri"],
-    },
-    {
-      name: centers[2],
-      centers: ["BVT-Lucknow"],
-    },
-    {
-      name: centers[3],
-      centers: ["SPS", "JKACADEMY"],
-    },
-    {
-      name: centers[4],
-      centers: [
-        "Vasishth Tripathi",
-        "Jangam",
-        "Kamalakarji",
-        "Mumukshu",
-        "Ved Nidhi",
-      ],
-    },
-  ];
+const DailyReport = () => {
 
   const getLibrariesInCenter = (_center: string = ""): string[] => {
     const obj = libraryMenuOptions.find((o) => o.name === (_center || center));
@@ -61,6 +37,8 @@ const DailyReport = () => {
   };
 
   const [pdfData, setPdfData] = useState<AllPdfStats>(new AllPdfStats());
+  const [validationMsg, setValidationMsg] = useState<boolean>(false);
+  const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
   const [staffName, setStaffName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -81,11 +59,8 @@ const DailyReport = () => {
     setPassword("");
     setPdfData(new AllPdfStats());
     setDisabledState(true);
-  };
-
-  const copyResults = () => {
-    // TODO: Toast Message that Results have been copied.
-    navigator.clipboard.writeText(AllPdfStats.toString(pdfData));
+    setSnackBarOpen(false);
+    setValidationMsg(false);
   };
 
   const handleCenterChange = (event: SelectChangeEvent) => {
@@ -98,8 +73,9 @@ const DailyReport = () => {
   };
 
   const loginToPortal = async () => {
-    const logIn = await HelperService.logIn(staffName,password);
+    const logIn:boolean = await HelperService.logIn(staffName,password);
     setLoggedIn(logIn);
+    setValidationMsg(!logIn);
   };
 
   const handleLibChange = (event: SelectChangeEvent) => {
@@ -121,13 +97,6 @@ const DailyReport = () => {
     }
   };
 
-  const prepareReportForPush = () => {
-    const dailyReport: DailyWorkReportType =
-      AllPdfStats.convertPdfStatsToDailyWorkReportTypeObject(pdfData);
-    console.log(`dailyReport ${JSON.stringify(dailyReport)}`);
-    pushReportToServer(dailyReport);
-  };
-
   return (
     <Stack spacing={2}>
       <Box sx={{ bgcolor: "#cfe8fc" }}>
@@ -142,6 +111,9 @@ const DailyReport = () => {
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "row" }}>
+        {loggedIn ? 
+        <>Hi {staffName} </> :
+        <>
         <Box sx={panelOneCSS}>
           First Name:{" "}
           <TextField
@@ -160,23 +132,29 @@ const DailyReport = () => {
             error={_.isEmpty(password)}
             size="small"
             type="password"
+            onSubmit={()=>loginToPortal()}
             onChange={(e) => setPassword(e.target.value)}
           />
         </Box>
 
         <Box sx={panelOneCSS}>
-          Login:{" "}
           <Button
             color="primary"
             variant="contained"
             component="span"
-            disabled={_.isEmpty(staffName) && _.isEmpty(password)}
+            disabled={(_.isEmpty(staffName) && _.isEmpty(password)) || loggedIn}
             onClick={()=>loginToPortal()}
             endIcon={<FiLogIn style={{ color: "primary" }} />}
           >
             Login
           </Button>
         </Box>
+        {validationMsg && <Typography sx={{color:"red"}}>Login Failure/Wrong UserId or Password</Typography>}
+        </>
+        }
+      </Box>
+
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box sx={panelOneCSS}>
           <InputLabel id="l1">Center</InputLabel>
         </Box>
@@ -225,37 +203,45 @@ const DailyReport = () => {
           type="file"
           multiple
           accept=".pdf"
+          disabled={!loggedIn}
           onChange={uploadPdf}
         />
         <Button
           color="primary"
           variant="contained"
           component="span"
-          disabled={!loggedIn}
+          disabled={!loggedIn }
           endIcon={<GoFileMedia style={{ color: "primary" }} />}
         >
           Choose PDFs
         </Button>
       </label>
       <Stack spacing={2} direction="row">
-        <Button
+        {/* <Button
           color="primary"
           variant="contained"
           component="span"
-          disabled={!loggedIn}
+         // disabled={!loggedIn || AllPdfStats.isEmpty(pdfData)}
           endIcon={<FaUpload style={{ color: "primary" }} />}
-          onClick={() => prepareReportForPush()}
+         // onClick={() => prepareReportForPush()}
         >
           Send to Server
-        </Button>
-        <Button
+        </Button> */}
+
+        <SendReportDialog pdfData={pdfData} setPdfData={setPdfData} snackBarOpen={snackBarOpen} setSnackBarOpen={setSnackBarOpen}/>
+        <Snackbar open={snackBarOpen} autoHideDuration={6000}>
+          <Alert severity="success" sx={{ width: '100%' }}>
+            Report Sent succcessfully
+          </Alert>
+        </Snackbar>
+        {/* <Button
           variant="contained"
           endIcon={<FaCopy style={{ color: "primary" }} />}
           onClick={copyResults}
           disabled={AllPdfStats.isEmpty(pdfData)}
         >
           Copy
-        </Button>
+        </Button> */}
         <Button
           variant="contained"
           endIcon={<FaRegTrashAlt style={{ color: "primary" }} />}
