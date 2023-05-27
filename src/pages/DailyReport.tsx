@@ -99,15 +99,9 @@ const DailyReport = () => {
 
   return (
     <Stack spacing={2}>
-      <Box sx={{ bgcolor: "#cfe8fc" }}>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <Typography>eGangotri Daily Work Report</Typography>
-          </Grid>
-          <Grid item xs={8}>
+       <Typography variant="h2" >eGangotri Daily Work Report</Typography>
+      <Box>
             <Icon icon="gangotri" height="300px" width="650px" />
-          </Grid>
-        </Grid>
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -153,7 +147,7 @@ const DailyReport = () => {
         </>
         }
       </Box>
-
+      <Typography>if can't login, then use <a href="https://egangotri-react-page-counter.web.app/">this</a></Typography>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box sx={panelOneCSS}>
           <InputLabel id="l1">Center</InputLabel>
@@ -165,6 +159,7 @@ const DailyReport = () => {
             value={center}
             onChange={handleCenterChange}
             sx={{minWidth: '200px'}}
+            disabled={!loggedIn}
           >
             {centers.map((option: string) => (
               <MenuItem key={option} value={option}>
@@ -184,6 +179,7 @@ const DailyReport = () => {
             onChange={handleLibChange}
             label="Library"
             sx={{minWidth: '200px'}}
+            disabled={!loggedIn}
           >
             {(libraries || []).map((option: string, index: number) => (
               <MenuItem
@@ -205,14 +201,14 @@ const DailyReport = () => {
           type="file"
           multiple
           accept=".pdf"
-          disabled={!loggedIn}
+          disabled={!loggedIn || center === centers[0]}
           onChange={uploadPdf}
         />
         <Button
           color="primary"
           variant="contained"
           component="span"
-          disabled={!loggedIn }
+          disabled={!loggedIn || center === centers[0]}
           endIcon={<GoFileMedia style={{ color: "primary" }} />}
         >
           Choose PDFs
@@ -258,6 +254,7 @@ const DailyReport = () => {
       </Stack>
       <Box ref={dataHoldingElement}>{AllPdfStats.decorate(pdfData)}</Box>
     </Stack>
+
   );
 };
 
